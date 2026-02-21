@@ -11,6 +11,16 @@ interface MenuitemApiResponse {
     errorMessage: string | null;
 }
 
+interface MenuitemPayloadWithAdminKey {
+    menuitem: Partial<Menuitem>;
+    adminKey: string;
+}
+
+interface MenuitemIdPayloadWithAdminKey {
+    id: string;
+    adminKey: string;
+}
+
 const PATH = 'menuitems';
 
 export const menuitemsApiSlice = createApi({
@@ -31,24 +41,36 @@ export const menuitemsApiSlice = createApi({
                 method: 'GET',
             }),
         }),
-        postMenuitem: build.mutation<MenuitemApiResponse, Partial<Menuitem>>({
-            query: (newMenuitem) => ({
+        postMenuitem: build.mutation<
+            MenuitemApiResponse,
+            MenuitemPayloadWithAdminKey
+        >({
+            query: (payload) => ({
                 url: '',
                 method: 'POST',
-                body: newMenuitem,
+                body: payload.menuitem,
+                headers: { 'x-admin-key': payload.adminKey },
             }),
         }),
-        deleteMenuitem: build.mutation<MenuitemApiResponse, string>({
-            query: (id) => ({
-                url: `/${id}`,
+        deleteMenuitem: build.mutation<
+            MenuitemApiResponse,
+            MenuitemIdPayloadWithAdminKey
+        >({
+            query: (payload) => ({
+                url: `/${payload.id}`,
                 method: 'DELETE',
+                headers: { 'x-admin-key': payload.adminKey },
             }),
         }),
-        putMenuitem: build.mutation<MenuitemApiResponse, Partial<Menuitem>>({
-            query: (updatedMenuitem) => ({
-                url: `/${updatedMenuitem.id}`,
+        putMenuitem: build.mutation<
+            MenuitemApiResponse,
+            MenuitemPayloadWithAdminKey
+        >({
+            query: (payload) => ({
+                url: `/${payload.menuitem.id}`,
                 method: 'PUT',
-                body: updatedMenuitem,
+                body: payload.menuitem,
+                headers: { 'x-admin-key': payload.adminKey },
             }),
         }),
     }),

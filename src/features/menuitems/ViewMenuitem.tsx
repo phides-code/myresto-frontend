@@ -4,10 +4,15 @@ import {
     useGetMenuitemsQuery,
     usePutMenuitemMutation,
 } from './menuitemsApiSlice';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
+import { useAdminKey } from '../../context/AdminKeyContext';
 
 const ViewMenuitem = () => {
     const { menuitemId } = useParams<{ menuitemId: string }>();
+    const { adminKeyValid } = useContext(AdminKeyValidityContext);
+
+    const { getAdminKey } = useAdminKey();
 
     const [editMode, setEditMode] = useState(false);
     const [updatedContent, setUpdatedContent] = useState('');
@@ -20,7 +25,7 @@ const ViewMenuitem = () => {
         isFetching: isQueryFetching,
         refetch: refetchQuery,
     } = useGetMenuitemByIdQuery(menuitemId as string);
-    const [putRecipe, { isLoading: isPutLoading, isError: isPutError }] =
+    const [putMenuitem, { isLoading: isPutLoading, isError: isPutError }] =
         usePutMenuitemMutation();
     const { isFetching: isGetFetching, refetch: refetchGet } =
         useGetMenuitemsQuery();
@@ -46,10 +51,12 @@ const ViewMenuitem = () => {
         e.preventDefault();
         console.log('Updating Menuitem:', updatedContent);
 
+        const adminKey = getAdminKey();
+
         try {
-            const putResult = await putRecipe({
-                id: menuitemId as string,
-                content: updatedContent,
+            const putResult = await putMenuitem({
+                menuitem: { id: menuitemId, content: updatedContent },
+                adminKey,
             }).unwrap();
 
             if (putResult.errorMessage) {
@@ -77,7 +84,8 @@ const ViewMenuitem = () => {
 
     const contentUnchanged = menuitem.content === updatedContent;
     const isLoading = isPutLoading || isQueryFetching || isGetFetching;
-    const submitDisabled = isLoading || contentUnchanged || !updatedContent;
+    const submitDisabled =
+        isLoading || contentUnchanged || !updatedContent || !adminKeyValid;
     const cancelDisabled = isLoading;
 
     return (

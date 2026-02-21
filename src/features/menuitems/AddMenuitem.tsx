@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useGetMenuitemsQuery, usePostMenuitemMutation } from './menuitemsApiSlice';
+import {
+    useGetMenuitemsQuery,
+    usePostMenuitemMutation,
+} from './menuitemsApiSlice';
+import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
+import { useAdminKey } from '../../context/AdminKeyContext';
 
 interface AddMenuitemProps {
     setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
@@ -9,19 +14,23 @@ interface AddMenuitemProps {
 const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
     const navigate = useNavigate();
 
+    const { getAdminKey } = useAdminKey();
+
+    const { adminKeyValid } = useContext(AdminKeyValidityContext);
+
     const [newMenuitem, setNewMenuitem] = useState({
         content: '',
     });
 
-    const [postRecipe, { isLoading: isPostLoading, isError }] =
+    const [postMenuitem, { isLoading: isPostLoading, isError }] =
         usePostMenuitemMutation();
     const { refetch, isFetching: isGetFetching } = useGetMenuitemsQuery();
 
     const isLoading = isPostLoading || isGetFetching;
-    const submitDisabled = isLoading || !newMenuitem.content;
+    const submitDisabled = isLoading || !newMenuitem.content || !adminKeyValid;
     const cancelDisabled = isLoading;
 
-    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleMenuItemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNewMenuitem({ ...newMenuitem, content: e.target.value });
     };
 
@@ -31,10 +40,14 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Adding new Menuitem:', newMenuitem);
+
+        const adminKey = getAdminKey();
 
         try {
-            const postResult = await postRecipe(newMenuitem).unwrap();
+            const postResult = await postMenuitem({
+                menuitem: newMenuitem,
+                adminKey,
+            }).unwrap();
 
             if (postResult.errorMessage) {
                 throw new Error(postResult.errorMessage);
@@ -62,11 +75,12 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
                         required
                         placeholder='Enter menuitem content'
                         autoFocus
-                        onChange={handleOnChange}
+                        onChange={handleMenuItemChange}
                         value={newMenuitem.content}
                         disabled={isLoading}
                     />
                 </div>
+
                 <button type='submit' disabled={submitDisabled}>
                     Add Menuitem
                 </button>
@@ -83,4 +97,5 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
         </div>
     );
 };
+
 export default AddMenuitem;

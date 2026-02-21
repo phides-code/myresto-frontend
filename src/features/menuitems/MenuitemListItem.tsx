@@ -1,10 +1,19 @@
 import { Link } from 'react-router';
-import { useDeleteMenuitemMutation, useGetMenuitemsQuery } from './menuitemsApiSlice';
-import { useState } from 'react';
+import {
+    useDeleteMenuitemMutation,
+    useGetMenuitemsQuery,
+} from './menuitemsApiSlice';
+import { useContext, useState } from 'react';
 import type { Menuitem } from '../../types';
+import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
+import { useAdminKey } from '../../context/AdminKeyContext';
 
 const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
-    const [deleteMenuitem, { isLoading, isError }] = useDeleteMenuitemMutation();
+    const { getAdminKey } = useAdminKey();
+    const { adminKeyValid } = useContext(AdminKeyValidityContext);
+
+    const [deleteMenuitem, { isLoading, isError }] =
+        useDeleteMenuitemMutation();
     const { refetch, isFetching } = useGetMenuitemsQuery();
 
     const [deletingThis, setDeletingThis] = useState(false);
@@ -12,9 +21,14 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
     const handleDelete = async () => {
         console.log(`Deleting menuitem with id: ${menuitem.id}`);
 
+        const adminKey = getAdminKey();
+
         try {
             setDeletingThis(true);
-            const deleteResult = await deleteMenuitem(menuitem.id).unwrap();
+            const deleteResult = await deleteMenuitem({
+                id: menuitem.id,
+                adminKey,
+            }).unwrap();
 
             if (deleteResult.errorMessage) {
                 throw new Error(deleteResult.errorMessage);
@@ -26,7 +40,8 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
         }
     };
 
-    const disableDeleteButton = (isFetching || isLoading) && deletingThis;
+    const disableDeleteButton =
+        ((isFetching || isLoading) && deletingThis) || !adminKeyValid;
 
     return (
         <li>

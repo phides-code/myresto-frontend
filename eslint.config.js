@@ -88,10 +88,12 @@ const eslintConfig = config(
             '@typescript-eslint/non-nullable-type-assertion-style': 0,
             '@typescript-eslint/no-floating-promises': 0,
             '@typescript-eslint/no-misused-promises': 0,
+            '@typescript-eslint/no-unused-vars': 'warn',
+            '@typescript-eslint/no-deprecated': 'warn',
         },
     },
 
-    prettierConfig
+    prettierConfig,
 );
 
 export default eslintConfig;
