@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router';
-import MenuitemHeader from './MenuitemHeader';
+import { Route, Routes } from 'react-router';
+import MenuitemsNav from './MenuitemsNav';
 import ListMenuitems from './ListMenuitems';
 import ViewMenuitem from './ViewMenuitem';
 import AddMenuitem from './AddMenuitem';
@@ -9,17 +9,15 @@ const Menuitems = () => {
     const [showSuccess, setShowSuccess] = useState(false);
     return (
         <div>
-            <BrowserRouter>
-                <MenuitemHeader />
-                <Routes>
-                    <Route path='/' element={<ListMenuitems />} />
-                    <Route path='/:menuitemId' element={<ViewMenuitem />} />
-                    <Route
-                        path='/add-menuitem'
-                        element={<AddMenuitem setShowSuccess={setShowSuccess} />}
-                    />
-                </Routes>
-            </BrowserRouter>
+            <MenuitemsNav />
+            <Routes>
+                <Route index element={<ListMenuitems />} />
+                <Route
+                    path='add-menuitem'
+                    element={<AddMenuitem setShowSuccess={setShowSuccess} />}
+                />
+                <Route path=':menuitemId' element={<ViewMenuitem />} />
+            </Routes>
             {showSuccess && (
                 <div>
                     <h2>Menuitem added successfully!</h2>

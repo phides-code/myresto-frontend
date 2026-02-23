@@ -45,7 +45,7 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
 
     return (
         <li>
-            <Link to={`/${menuitem.id}`}> {menuitem.content}</Link>
+            <Link to={`/menuitems/${menuitem.id}`}> {menuitem.content}</Link>
             <button disabled={disableDeleteButton} onClick={handleDelete}>
                 Delete
             </button>
