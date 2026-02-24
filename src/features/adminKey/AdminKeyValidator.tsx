@@ -1,34 +1,36 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { useLazyValidateAdminKeyQuery } from './adminKeyApiSlice';
 import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 import { useAdminKey } from '../../context/AdminKeyContext';
 
 const AdminKeyValidator = () => {
-    const { getAdminKey, setAdminKey } = useAdminKey();
+    const { setAdminKey } = useAdminKey();
 
-    const { setAdminKeyValid } = useContext(AdminKeyValidityContext);
+    const { adminKeyValid, setAdminKeyValid } = useContext(
+        AdminKeyValidityContext,
+    );
+
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const [triggerValidateAdminKey, { data, isError, isLoading }] =
         useLazyValidateAdminKeyQuery();
 
-    const adminKeyValid = data?.data as boolean;
+    const adminKeyValidityResponse = data?.data as boolean;
 
-    const formDisabled = adminKeyValid || isLoading;
-
-    const handleAdminKeyChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-        setAdminKey(ev.target.value);
-    };
+    const formDisabled = adminKeyValidityResponse || adminKeyValid || isLoading;
 
     const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
 
-        const adminKey = getAdminKey();
+        const adminKeyFromInput = inputRef.current?.value ?? '';
+        setAdminKey(adminKeyFromInput);
 
         try {
             const validationResult =
-                await triggerValidateAdminKey(adminKey).unwrap();
+                await triggerValidateAdminKey(adminKeyFromInput).unwrap();
 
             if (validationResult.data) {
+                sessionStorage.setItem('adminKey', adminKeyFromInput);
                 setAdminKeyValid(true);
             }
         } catch (error) {
@@ -36,19 +38,40 @@ const AdminKeyValidator = () => {
         }
     };
 
+    const handleLogout = () => {
+        sessionStorage.removeItem('adminKey');
+        setAdminKey('');
+        setAdminKeyValid(false);
+        if (inputRef.current) {
+            inputRef.current.value = '';
+        }
+    };
+
+    useEffect(() => {
+        const saved = sessionStorage.getItem('adminKey');
+        if (saved) {
+            setAdminKey(saved);
+            setAdminKeyValid(true);
+
+            if (inputRef.current) {
+                inputRef.current.value = saved;
+            }
+        }
+    }, [setAdminKey, setAdminKeyValid]);
+
     return (
         <div>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor='adminKey'>Admin key:</label>
                     <input
-                        type='text'
+                        type='password'
                         id='adminKey'
                         name='adminKey'
                         required
                         placeholder='Enter admin key'
-                        onChange={handleAdminKeyChange}
                         disabled={formDisabled}
+                        ref={inputRef}
                     />
                     <button type='submit' disabled={formDisabled}>
                         Verify
@@ -57,8 +80,16 @@ const AdminKeyValidator = () => {
 
                 {isError && <div>Error validating admin key</div>}
                 {isLoading && <div>...</div>}
-                {adminKeyValid && <div>Admin key OK</div>}
-                {!adminKeyValid && !isLoading && !isError && (
+                {adminKeyValidityResponse || adminKeyValid ? (
+                    <div>
+                        <div>Admin key OK</div>
+                        <div>
+                            <button type='button' onClick={handleLogout}>
+                                Log out
+                            </button>
+                        </div>
+                    </div>
+                ) : (
                     <div>Please enter a valid admin key</div>
                 )}
             </form>

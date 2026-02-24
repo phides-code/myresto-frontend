@@ -55,7 +55,8 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
 
             await refetch();
             setShowSuccess(true);
-            navigate('/');
+
+            navigate(`/menuitems/${postResult.data?.id}`);
         } catch (error) {
             console.error('Error adding menuitem:', error);
         }
