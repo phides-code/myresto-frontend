@@ -20,7 +20,8 @@ jobs:
                   touch .env
                   echo VITE_MENUITEMS_SERVICE_URL=${{ secrets.MENUITEMS_SERVICE_URL }} >> .env
                   echo VITE_SETTINGS_SERVICE_URL=${{ secrets.SETTINGS_SERVICE_URL }} >> .env
-
+                  echo VITE_IMAGES_SERVICE_URL=${{ secrets.IMAGES_SERVICE_URL }} >> .env
+                  echo VITE_URL_PREFIX=${{ secrets.URL_PREFIX }} >> .env
             - name: Build
               run: npm run build
 

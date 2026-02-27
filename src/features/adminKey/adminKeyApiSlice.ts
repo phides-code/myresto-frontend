@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { SETTINGS_SERVICE_URL } from '../../constants';
 
 interface AdminKeyApiResponse {
     data: boolean | null;
@@ -6,7 +7,7 @@ interface AdminKeyApiResponse {
 }
 
 const PATH = 'validateadminkey';
-const baseUrl = `${import.meta.env.VITE_SETTINGS_SERVICE_URL as string}/${PATH}`;
+const baseUrl = `${SETTINGS_SERVICE_URL}/${PATH}`;
 
 export const adminKeyApiSlice = createApi({
     baseQuery: fetchBaseQuery({

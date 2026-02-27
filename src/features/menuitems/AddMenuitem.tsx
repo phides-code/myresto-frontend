@@ -6,6 +6,8 @@ import {
 } from './menuitemsApiSlice';
 import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 import { useAdminKey } from '../../context/AdminKeyContext';
+import ImageUploader from '../images/ImageUploader';
+import type { ImageSource } from '../../types';
 
 interface AddMenuitemProps {
     setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,6 +22,10 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
 
     const [newMenuitem, setNewMenuitem] = useState({
         content: '',
+        imageSource: {
+            originalName: '',
+            uuidName: '',
+        } as ImageSource,
     });
 
     const [postMenuitem, { isLoading: isPostLoading, isError }] =
@@ -79,6 +85,13 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
                         onChange={handleMenuItemChange}
                         value={newMenuitem.content}
                         disabled={isLoading}
+                    />
+                </div>
+
+                <div>
+                    <ImageUploader
+                        parentForm={newMenuitem}
+                        setParentForm={setNewMenuitem}
                     />
                 </div>
 

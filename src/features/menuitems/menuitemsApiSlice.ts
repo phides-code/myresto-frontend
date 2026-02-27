@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Menuitem } from '../../types';
+import { MENUITEMS_SERVICE_URL } from '../../constants';
 
 interface MenuitemsApiResponse {
     data: Menuitem[] | null;
@@ -25,7 +26,7 @@ const PATH = 'menuitems';
 
 export const menuitemsApiSlice = createApi({
     baseQuery: fetchBaseQuery({
-        baseUrl: import.meta.env.VITE_MENUITEMS_SERVICE_URL as string,
+        baseUrl: MENUITEMS_SERVICE_URL,
     }),
     reducerPath: `${PATH}Api`,
     endpoints: (build) => ({

@@ -7,6 +7,7 @@ import { useContext, useState } from 'react';
 import type { Menuitem } from '../../types';
 import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 import { useAdminKey } from '../../context/AdminKeyContext';
+import { URL_PREFIX } from '../../constants';
 
 const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
     const { getAdminKey } = useAdminKey();
@@ -45,7 +46,16 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
 
     return (
         <li>
-            <Link to={`/menuitems/${menuitem.id}`}> {menuitem.content}</Link>
+            <Link to={`/menuitems/${menuitem.id}`}>
+                {menuitem.content}
+                <img
+                    src={`${URL_PREFIX}/assets/${menuitem.imageSource.uuidName}`}
+                    alt={menuitem.imageSource.originalName}
+                    style={{
+                        width: '100px',
+                    }}
+                />
+            </Link>
             <button disabled={disableDeleteButton} onClick={handleDelete}>
                 Delete
             </button>
