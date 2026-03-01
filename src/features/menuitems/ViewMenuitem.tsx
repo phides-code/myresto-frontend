@@ -9,6 +9,7 @@ import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 import { useAdminKey } from '../../context/AdminKeyContext';
 import { URL_PREFIX } from '../../constants';
 import type { ImageSource, NewOrUpdatedMenuitem } from '../../types';
+import ImageUploader from '../images/ImageUploader';
 
 const ViewMenuitem = () => {
     const { menuitemId } = useParams<{ menuitemId: string }>();
@@ -128,10 +129,10 @@ const ViewMenuitem = () => {
                     <form onSubmit={handleSubmit}>
                         <fieldset disabled={isLoading}>
                             <p>
-                                <div>
-                                    <MenuitemImg />
-                                </div>
-                                <div>Change image</div>
+                                <ImageUploader
+                                    parentForm={updatedMenuitem}
+                                    setParentForm={setUpdatedMenuitem}
+                                />
                             </p>
                             <label htmlFor='menuitemContent'>Content:</label>
                             <input
