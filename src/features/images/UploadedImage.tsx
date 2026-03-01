@@ -1,9 +1,7 @@
-import { useContext } from 'react';
 import { URL_PREFIX } from '../../constants';
 import { useAdminKey } from '../../context/AdminKeyContext';
 import type { ImageSource } from '../../types';
 import { useDeleteImageMutation } from './imagesApiSlice';
-import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 
 export interface UploadedImageProps<
     T extends { imageSource: ImageSource | null },
@@ -16,12 +14,9 @@ const UploadedImage = <T extends { imageSource: ImageSource | null }>({
     imageSource,
     setParentForm: setMenuitem,
 }: UploadedImageProps<T>) => {
-    const [deleteImage, { isError, isLoading }] = useDeleteImageMutation();
+    const [deleteImage, { isError }] = useDeleteImageMutation();
 
     const { getAdminKey } = useAdminKey();
-    const { adminKeyValid } = useContext(AdminKeyValidityContext);
-
-    const inputDisabled = isLoading || !adminKeyValid;
 
     const removeFileFromList = async (
         ev: React.MouseEvent<HTMLButtonElement>,
@@ -71,7 +66,6 @@ const UploadedImage = <T extends { imageSource: ImageSource | null }>({
             <div>
                 <span>{imageSource.originalName}</span>
                 <button
-                    disabled={inputDisabled}
                     onClick={(ev) => {
                         removeFileFromList(ev, imageSource);
                     }}

@@ -1,12 +1,21 @@
+interface BaseEntity {
+    id: string;
+    createdOn: number;
+}
+
 export interface ImageSource {
     originalName: string;
     uuidName: string;
 }
 
-export interface Menuitem {
-    id: string;
+export interface Menuitem extends BaseEntity {
     content: string;
-    createdOn: number;
+    imageSource: ImageSource;
+}
+
+export interface NewOrUpdatedMenuitem {
+    id?: string;
+    content: string;
     imageSource: ImageSource;
 }
 

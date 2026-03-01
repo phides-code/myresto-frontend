@@ -1,7 +1,11 @@
 import { useContext, useEffect, useRef } from 'react';
-import { useLazyValidateAdminKeyQuery } from './adminKeyApiSlice';
+import {
+    adminKeyApiSlice,
+    useLazyValidateAdminKeyQuery,
+} from './adminKeyApiSlice';
 import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 import { useAdminKey } from '../../context/AdminKeyContext';
+import { useAppDispatch } from '../../app/hooks';
 
 const AdminKeyValidator = () => {
     const { setAdminKey } = useAdminKey();
@@ -11,6 +15,8 @@ const AdminKeyValidator = () => {
     );
 
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const dispatch = useAppDispatch();
 
     const [triggerValidateAdminKey, { data, isError, isLoading }] =
         useLazyValidateAdminKeyQuery();
@@ -42,6 +48,8 @@ const AdminKeyValidator = () => {
         sessionStorage.removeItem('adminKey');
         setAdminKey('');
         setAdminKeyValid(false);
+        dispatch(adminKeyApiSlice.util.resetApiState()); // Clears RTK Query cache
+
         if (inputRef.current) {
             inputRef.current.value = '';
         }
@@ -62,37 +70,35 @@ const AdminKeyValidator = () => {
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor='adminKey'>Admin key:</label>
-                    <input
-                        type='password'
-                        id='adminKey'
-                        name='adminKey'
-                        required
-                        placeholder='Enter admin key'
-                        disabled={formDisabled}
-                        ref={inputRef}
-                    />
-                    <button type='submit' disabled={formDisabled}>
-                        Verify
-                    </button>
-                </div>
-
-                {isError && <div>Error validating admin key</div>}
-                {isLoading && <div>...</div>}
-                {adminKeyValidityResponse || adminKeyValid ? (
+                <fieldset disabled={formDisabled}>
                     <div>
-                        <div>Admin key OK</div>
-                        <div>
-                            <button type='button' onClick={handleLogout}>
-                                Log out
-                            </button>
-                        </div>
+                        <label htmlFor='adminKey'>Admin key:</label>
+                        <input
+                            type='password'
+                            id='adminKey'
+                            name='adminKey'
+                            required
+                            placeholder='Enter admin key'
+                            ref={inputRef}
+                        />
+                        <button type='submit'>Verify</button>
                     </div>
-                ) : (
-                    <div>Please enter a valid admin key</div>
-                )}
+                </fieldset>
             </form>
+            {isError && <div>Error validating admin key</div>}
+            {isLoading && <div>...</div>}
+            {adminKeyValidityResponse || adminKeyValid ? (
+                <div>
+                    <div>Admin key OK</div>
+                    <div>
+                        <button type='button' onClick={handleLogout}>
+                            Log out
+                        </button>
+                    </div>
+                </div>
+            ) : (
+                <div>Please enter a valid admin key</div>
+            )}
         </div>
     );
 };

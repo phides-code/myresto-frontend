@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { Menuitem } from '../../types';
+import type { Menuitem, NewOrUpdatedMenuitem } from '../../types';
 import { MENUITEMS_SERVICE_URL } from '../../constants';
 
 interface MenuitemsApiResponse {
@@ -13,7 +13,7 @@ interface MenuitemApiResponse {
 }
 
 interface MenuitemPayloadWithAdminKey {
-    menuitem: Partial<Menuitem>;
+    menuitem: NewOrUpdatedMenuitem;
     adminKey: string;
 }
 

@@ -1,9 +1,8 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useUploadImageMutation } from './imagesApiSlice';
 import type { ImageDataPayload, ImageSource } from '../../types';
 import { useAdminKey } from '../../context/AdminKeyContext';
 import UploadedImage from './UploadedImage';
-import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 
 interface ImageUploaderProps<T> {
     parentForm: T;
@@ -12,26 +11,21 @@ interface ImageUploaderProps<T> {
 
 const MAX_FILE_SIZE = 5; // 5MB
 
-const ImageUploader = <T extends { imageSource: ImageSource | null }>({
+const ImageUploader = <T extends { imageSource: ImageSource }>({
     parentForm: menuitem,
     setParentForm: setMenuitem,
 }: ImageUploaderProps<T>) => {
-    const [uploadImage, { isError, isLoading }] = useUploadImageMutation();
+    const [uploadImage, { isError }] = useUploadImageMutation();
     const [unsupportedFileError, setUnsupportedFileError] =
         useState<boolean>(false);
 
     const { getAdminKey } = useAdminKey();
-
-    const { adminKeyValid } = useContext(AdminKeyValidityContext);
-
-    const inputDisabled = isLoading || !adminKeyValid;
 
     const handleFileChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
         const files: FileList = ev.target.files as FileList;
         const file: File = files[0];
 
         if (
-            // !file ||
             !file.type.includes('image/') ||
             file.size > MAX_FILE_SIZE * 1024 * 1024
         ) {
@@ -87,14 +81,13 @@ const ImageUploader = <T extends { imageSource: ImageSource | null }>({
     return (
         <div>
             <label>Image (optional?):</label>
-            {menuitem.imageSource?.uuidName ? (
+            {menuitem.imageSource.uuidName ? (
                 <UploadedImage
                     imageSource={menuitem.imageSource}
                     setParentForm={setMenuitem}
                 />
             ) : (
                 <input
-                    disabled={inputDisabled}
                     type='file'
                     id='hide-upload-default-text'
                     onChange={handleFileChange}

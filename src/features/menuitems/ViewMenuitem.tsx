@@ -4,9 +4,11 @@ import {
     useGetMenuitemsQuery,
     usePutMenuitemMutation,
 } from './menuitemsApiSlice';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 import { useAdminKey } from '../../context/AdminKeyContext';
+import { URL_PREFIX } from '../../constants';
+import type { ImageSource, NewOrUpdatedMenuitem } from '../../types';
 
 const ViewMenuitem = () => {
     const { menuitemId } = useParams<{ menuitemId: string }>();
@@ -15,7 +17,15 @@ const ViewMenuitem = () => {
     const { getAdminKey } = useAdminKey();
 
     const [editMode, setEditMode] = useState(false);
-    const [updatedContent, setUpdatedContent] = useState('');
+    const [updatedMenuitem, setUpdatedMenuitem] =
+        useState<NewOrUpdatedMenuitem>({
+            content: '',
+            imageSource: {
+                originalName: '',
+                uuidName: '',
+            } as ImageSource,
+        });
+
     const [showSuccess, setShowSuccess] = useState(false);
 
     const {
@@ -30,8 +40,13 @@ const ViewMenuitem = () => {
     const { isFetching: isGetFetching, refetch: refetchGet } =
         useGetMenuitemsQuery();
 
+    const menuitem = data?.data;
+
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUpdatedContent(e.target.value);
+        setUpdatedMenuitem((menuitem) => ({
+            ...menuitem,
+            content: e.target.value,
+        }));
     };
 
     const handleEdit = () => {
@@ -49,13 +64,13 @@ const ViewMenuitem = () => {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('Updating Menuitem:', updatedContent);
+        console.log('Updating Menuitem:', updatedMenuitem);
 
         const adminKey = getAdminKey();
 
         try {
             const putResult = await putMenuitem({
-                menuitem: { id: menuitemId, content: updatedContent },
+                menuitem: { id: menuitemId, ...updatedMenuitem },
                 adminKey,
             }).unwrap();
 
@@ -71,22 +86,36 @@ const ViewMenuitem = () => {
         }
     };
 
+    useEffect(() => {
+        if (menuitem) {
+            setUpdatedMenuitem(menuitem);
+        }
+    }, [menuitem]);
+
     if (isQueryLoading) {
         return <div>Loading...</div>;
     }
     if (isQueryError) {
         return <div>Error loading menuitem.</div>;
     }
-    const menuitem = data?.data;
+
     if (!menuitem) {
         return <div>Menuitem not found.</div>;
     }
 
-    const contentUnchanged = menuitem.content === updatedContent;
+    const contentUnchanged = menuitem.content === updatedMenuitem.content;
     const isLoading = isPutLoading || isQueryFetching || isGetFetching;
-    const submitDisabled =
-        isLoading || contentUnchanged || !updatedContent || !adminKeyValid;
-    const cancelDisabled = isLoading;
+    const submitDisabled = isLoading || contentUnchanged || !adminKeyValid;
+
+    const MenuitemImg = () => (
+        <img
+            src={`${URL_PREFIX}/assets/${menuitem.imageSource.uuidName}`}
+            alt={menuitem.imageSource.originalName}
+            style={{
+                width: '100px',
+            }}
+        />
+    );
 
     return (
         <div>
@@ -97,33 +126,44 @@ const ViewMenuitem = () => {
             {editMode ? (
                 <div>
                     <form onSubmit={handleSubmit}>
-                        <label htmlFor='menuitemContent'>Content:</label>
-                        <input
-                            type='text'
-                            id='menuitemContent'
-                            name='menuitemContent'
-                            defaultValue={menuitem.content}
-                            required
-                            onChange={handleOnChange}
-                            disabled={isLoading}
-                        />
-                        <button type='submit' disabled={submitDisabled}>
-                            Update Menuitem
-                        </button>
-                        <button
-                            type='button'
-                            disabled={cancelDisabled}
-                            onClick={handleCancel}
-                        >
-                            Cancel
-                        </button>
-                        {isPutError && (
-                            <p>Error updating menuitem. Please try again.</p>
-                        )}
+                        <fieldset disabled={isLoading}>
+                            <p>
+                                <div>
+                                    <MenuitemImg />
+                                </div>
+                                <div>Change image</div>
+                            </p>
+                            <label htmlFor='menuitemContent'>Content:</label>
+                            <input
+                                type='text'
+                                id='menuitemContent'
+                                name='menuitemContent'
+                                defaultValue={menuitem.content}
+                                required
+                                onChange={handleOnChange}
+                            />
+                            <p>
+                                <button type='submit' disabled={submitDisabled}>
+                                    Update Menuitem
+                                </button>
+
+                                <button type='button' onClick={handleCancel}>
+                                    Cancel
+                                </button>
+                            </p>
+                            {isPutError && (
+                                <p>
+                                    Error updating menuitem. Please try again.
+                                </p>
+                            )}
+                        </fieldset>
                     </form>
                 </div>
             ) : (
                 <div>
+                    <p>
+                        <MenuitemImg />
+                    </p>
                     <p>Content: {menuitem.content}</p>
                     <button onClick={handleEdit}>Edit</button>
                 </div>

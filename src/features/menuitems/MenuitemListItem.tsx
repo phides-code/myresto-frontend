@@ -34,19 +34,30 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
         try {
             setDeletingThis(true);
 
-            const [menuitemResult, imageResult] = await Promise.all([
-                deleteMenuitem({ id: menuitem.id, adminKey }).unwrap(),
-                deleteImage({
-                    id: menuitem.imageSource.uuidName,
+            if (menuitem.imageSource.uuidName === '') {
+                const menuitemResult = await deleteMenuitem({
+                    id: menuitem.id,
                     adminKey,
-                }).unwrap(),
-            ]);
+                }).unwrap();
 
-            if (menuitemResult.errorMessage) {
-                throw new Error(menuitemResult.errorMessage);
-            }
-            if (imageResult.errorMessage) {
-                throw new Error(imageResult.errorMessage);
+                if (menuitemResult.errorMessage) {
+                    throw new Error(menuitemResult.errorMessage);
+                }
+            } else {
+                const [menuitemResult, imageResult] = await Promise.all([
+                    deleteMenuitem({ id: menuitem.id, adminKey }).unwrap(),
+                    deleteImage({
+                        id: menuitem.imageSource.uuidName,
+                        adminKey,
+                    }).unwrap(),
+                ]);
+
+                if (menuitemResult.errorMessage) {
+                    throw new Error(menuitemResult.errorMessage);
+                }
+                if (imageResult.errorMessage) {
+                    throw new Error(imageResult.errorMessage);
+                }
             }
 
             await refetch();

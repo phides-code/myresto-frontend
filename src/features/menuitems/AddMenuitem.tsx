@@ -7,7 +7,7 @@ import {
 import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 import { useAdminKey } from '../../context/AdminKeyContext';
 import ImageUploader from '../images/ImageUploader';
-import type { ImageSource } from '../../types';
+import type { ImageSource, NewOrUpdatedMenuitem } from '../../types';
 
 interface AddMenuitemProps {
     setShowSuccess: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,7 +20,7 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
 
     const { adminKeyValid } = useContext(AdminKeyValidityContext);
 
-    const [newMenuitem, setNewMenuitem] = useState({
+    const [newMenuitem, setNewMenuitem] = useState<NewOrUpdatedMenuitem>({
         content: '',
         imageSource: {
             originalName: '',
@@ -73,40 +73,43 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
             <h1>Add Menuitem</h1>
             <p>Menuitems are a great source of potassium!</p>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor='menuitemContent'>Menuitem Content:</label>
-                    <input
-                        type='text'
-                        id='menuitemContent'
-                        name='menuitemContent'
-                        required
-                        placeholder='Enter menuitem content'
-                        autoFocus
-                        onChange={handleMenuItemChange}
-                        value={newMenuitem.content}
-                        disabled={isLoading}
-                    />
-                </div>
+                <fieldset disabled={isLoading || !adminKeyValid}>
+                    <div>
+                        <label htmlFor='menuitemContent'>
+                            Menuitem Content:
+                        </label>
+                        <input
+                            type='text'
+                            id='menuitemContent'
+                            name='menuitemContent'
+                            required
+                            placeholder='Enter menuitem content'
+                            autoFocus
+                            onChange={handleMenuItemChange}
+                            value={newMenuitem.content}
+                        />
+                    </div>
 
-                <div>
-                    <ImageUploader
-                        parentForm={newMenuitem}
-                        setParentForm={setNewMenuitem}
-                    />
-                </div>
+                    <div>
+                        <ImageUploader
+                            parentForm={newMenuitem}
+                            setParentForm={setNewMenuitem}
+                        />
+                    </div>
 
-                <button type='submit' disabled={submitDisabled}>
-                    Add Menuitem
-                </button>
+                    <button type='submit' disabled={submitDisabled}>
+                        Add Menuitem
+                    </button>
 
-                <button
-                    type='button'
-                    disabled={cancelDisabled}
-                    onClick={handleCancel}
-                >
-                    Cancel
-                </button>
-                {isError && <p>Error adding menuitem. Please try again.</p>}
+                    <button
+                        type='button'
+                        disabled={cancelDisabled}
+                        onClick={handleCancel}
+                    >
+                        Cancel
+                    </button>
+                    {isError && <p>Error adding menuitem. Please try again.</p>}
+                </fieldset>
             </form>
         </div>
     );
