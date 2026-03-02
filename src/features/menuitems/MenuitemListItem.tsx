@@ -73,7 +73,7 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
     return (
         <li>
             <Link to={`/menuitems/${menuitem.id}`}>
-                {menuitem.content}
+                {menuitem.title}
                 <img
                     src={`${URL_PREFIX}/assets/${menuitem.imageSource.uuidName}`}
                     alt={menuitem.imageSource.originalName}
@@ -82,6 +82,8 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
                     }}
                 />
             </Link>
+            <div>{menuitem.description}</div>
+            <div>{menuitem.price}</div>
             <button disabled={disableDeleteButton} onClick={handleDelete}>
                 Delete
             </button>

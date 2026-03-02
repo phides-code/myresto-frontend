@@ -21,11 +21,13 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
     const { adminKeyValid } = useContext(AdminKeyValidityContext);
 
     const [newMenuitem, setNewMenuitem] = useState<NewOrUpdatedMenuitem>({
-        content: '',
+        title: '',
         imageSource: {
             originalName: '',
             uuidName: '',
         } as ImageSource,
+        description: '',
+        price: '',
     });
 
     const [postMenuitem, { isLoading: isPostLoading, isError }] =
@@ -33,11 +35,19 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
     const { refetch, isFetching: isGetFetching } = useGetMenuitemsQuery();
 
     const isLoading = isPostLoading || isGetFetching;
-    const submitDisabled = isLoading || !newMenuitem.content || !adminKeyValid;
+    const submitDisabled =
+        isLoading ||
+        !newMenuitem.title ||
+        !newMenuitem.description ||
+        !newMenuitem.price ||
+        !adminKeyValid;
     const cancelDisabled = isLoading;
 
-    const handleMenuItemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNewMenuitem({ ...newMenuitem, content: e.target.value });
+    const handleInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        field: keyof NewOrUpdatedMenuitem,
+    ) => {
+        setNewMenuitem({ ...newMenuitem, [field]: event.target.value });
     };
 
     const handleCancel = () => {
@@ -71,43 +81,76 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
     return (
         <div>
             <h1>Add Menuitem</h1>
-            <p>Menuitems are a great source of potassium!</p>
             <form onSubmit={handleSubmit}>
                 <fieldset disabled={isLoading || !adminKeyValid}>
-                    <div>
-                        <label htmlFor='menuitemContent'>
-                            Menuitem Content:
+                    <p>
+                        <label htmlFor='menuitemTitle'>Menuitem Title:</label>
+                        <input
+                            type='text'
+                            id='menuitemTitle'
+                            name='menuitemTitle'
+                            required
+                            placeholder='Enter title'
+                            autoFocus
+                            onChange={(e) => {
+                                handleInputChange(e, 'title');
+                            }}
+                            value={newMenuitem.title}
+                        />
+                    </p>
+                    <p>
+                        <label htmlFor='menuitemDescription'>
+                            Description:
                         </label>
                         <input
                             type='text'
-                            id='menuitemContent'
-                            name='menuitemContent'
+                            id='menuitemDescription'
+                            name='menuitemDescription'
                             required
-                            placeholder='Enter menuitem content'
+                            placeholder='Enter description'
                             autoFocus
-                            onChange={handleMenuItemChange}
-                            value={newMenuitem.content}
+                            onChange={(e) => {
+                                handleInputChange(e, 'description');
+                            }}
+                            value={newMenuitem.description}
                         />
-                    </div>
+                    </p>
+                    <p>
+                        <label htmlFor='menuitemPrice'>Price:</label>
+                        <input
+                            type='text'
+                            id='menuitemPrice'
+                            name='menuitemPrice'
+                            required
+                            placeholder='Enter price'
+                            autoFocus
+                            onChange={(e) => {
+                                handleInputChange(e, 'price');
+                            }}
+                            value={newMenuitem.price}
+                        />
+                    </p>
 
-                    <div>
+                    <p>
                         <ImageUploader
                             parentForm={newMenuitem}
                             setParentForm={setNewMenuitem}
                         />
-                    </div>
+                    </p>
 
-                    <button type='submit' disabled={submitDisabled}>
-                        Add Menuitem
-                    </button>
+                    <p>
+                        <button type='submit' disabled={submitDisabled}>
+                            Add Menuitem
+                        </button>
 
-                    <button
-                        type='button'
-                        disabled={cancelDisabled}
-                        onClick={handleCancel}
-                    >
-                        Cancel
-                    </button>
+                        <button
+                            type='button'
+                            disabled={cancelDisabled}
+                            onClick={handleCancel}
+                        >
+                            Cancel
+                        </button>
+                    </p>
                     {isError && <p>Error adding menuitem. Please try again.</p>}
                 </fieldset>
             </form>

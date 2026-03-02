@@ -20,11 +20,13 @@ const ViewMenuitem = () => {
     const [editMode, setEditMode] = useState(false);
     const [updatedMenuitem, setUpdatedMenuitem] =
         useState<NewOrUpdatedMenuitem>({
-            content: '',
+            title: '',
             imageSource: {
                 originalName: '',
                 uuidName: '',
             } as ImageSource,
+            description: '',
+            price: '',
         });
 
     const [showSuccess, setShowSuccess] = useState(false);
@@ -43,10 +45,13 @@ const ViewMenuitem = () => {
 
     const menuitem = data?.data;
 
-    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (
+        event: React.ChangeEvent<HTMLInputElement>,
+        field: keyof NewOrUpdatedMenuitem,
+    ) => {
         setUpdatedMenuitem((menuitem) => ({
             ...menuitem,
-            content: e.target.value,
+            [field]: event.target.value,
         }));
     };
 
@@ -104,7 +109,12 @@ const ViewMenuitem = () => {
         return <div>Menuitem not found.</div>;
     }
 
-    const contentUnchanged = menuitem.content === updatedMenuitem.content;
+    const contentUnchanged =
+        menuitem.title === updatedMenuitem.title &&
+        menuitem.description === updatedMenuitem.description &&
+        menuitem.price === updatedMenuitem.price &&
+        menuitem.imageSource.uuidName === updatedMenuitem.imageSource.uuidName;
+
     const isLoading = isPutLoading || isQueryFetching || isGetFetching;
     const submitDisabled = isLoading || contentUnchanged || !adminKeyValid;
 
@@ -134,15 +144,49 @@ const ViewMenuitem = () => {
                                     setParentForm={setUpdatedMenuitem}
                                 />
                             </p>
-                            <label htmlFor='menuitemContent'>Content:</label>
-                            <input
-                                type='text'
-                                id='menuitemContent'
-                                name='menuitemContent'
-                                defaultValue={menuitem.content}
-                                required
-                                onChange={handleOnChange}
-                            />
+                            <p>
+                                <label htmlFor='menuitemTitle'>Title:</label>
+                                <input
+                                    type='text'
+                                    id='menuitemTitle'
+                                    name='menuitemTitle'
+                                    defaultValue={menuitem.title}
+                                    required
+                                    onChange={(e) => {
+                                        handleInputChange(e, 'title');
+                                    }}
+                                />
+                            </p>
+
+                            <p>
+                                <label htmlFor='menuitemDescription'>
+                                    Description:
+                                </label>
+                                <input
+                                    type='text'
+                                    id='menuitemDescription'
+                                    name='menuitemDescription'
+                                    defaultValue={menuitem.description}
+                                    required
+                                    onChange={(e) => {
+                                        handleInputChange(e, 'description');
+                                    }}
+                                />
+                            </p>
+
+                            <p>
+                                <label htmlFor='menuitemPrice'>Price:</label>
+                                <input
+                                    type='text'
+                                    id='menuitemPrice'
+                                    name='menuitemPrice'
+                                    defaultValue={menuitem.price}
+                                    required
+                                    onChange={(e) => {
+                                        handleInputChange(e, 'price');
+                                    }}
+                                />
+                            </p>
                             <p>
                                 <button type='submit' disabled={submitDisabled}>
                                     Update Menuitem
@@ -165,7 +209,9 @@ const ViewMenuitem = () => {
                     <p>
                         <MenuitemImg />
                     </p>
-                    <p>Content: {menuitem.content}</p>
+                    <p>Title: {menuitem.title}</p>
+                    <p>Description: {menuitem.description}</p>
+                    <p>Price: {menuitem.price}</p>
                     <button onClick={handleEdit}>Edit</button>
                 </div>
             )}
