@@ -14,7 +14,7 @@ const UploadedImage = <T extends { imageSource: ImageSource | null }>({
     imageSource,
     setParentForm: setMenuitem,
 }: UploadedImageProps<T>) => {
-    const [deleteImage, { isError }] = useDeleteImageMutation();
+    const [deleteImage, { isError, isLoading }] = useDeleteImageMutation();
 
     const { getAdminKey } = useAdminKey();
 
@@ -69,6 +69,7 @@ const UploadedImage = <T extends { imageSource: ImageSource | null }>({
                     onClick={(ev) => {
                         removeFileFromList(ev, imageSource);
                     }}
+                    disabled={isLoading}
                 >
                     remove
                 </button>

@@ -15,7 +15,7 @@ const ImageUploader = <T extends { imageSource: ImageSource }>({
     parentForm: menuitem,
     setParentForm: setMenuitem,
 }: ImageUploaderProps<T>) => {
-    const [uploadImage, { isError }] = useUploadImageMutation();
+    const [uploadImage, { isError, isLoading }] = useUploadImageMutation();
     const [unsupportedFileError, setUnsupportedFileError] =
         useState<boolean>(false);
 
@@ -91,6 +91,7 @@ const ImageUploader = <T extends { imageSource: ImageSource }>({
                     type='file'
                     id='hide-upload-default-text'
                     onChange={handleFileChange}
+                    disabled={isLoading}
                 />
             )}
             {isError && (
