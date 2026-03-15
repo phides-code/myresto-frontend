@@ -84,6 +84,7 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
             </Link>
             <div>{menuitem.description}</div>
             <div>{menuitem.price}</div>
+            <div>{menuitem.category}</div>
             <button disabled={disableDeleteButton} onClick={handleDelete}>
                 Delete
             </button>

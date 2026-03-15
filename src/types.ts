@@ -13,6 +13,7 @@ export interface Menuitem extends BaseEntity {
     imageSource: ImageSource;
     description: string;
     price: string;
+    category: string;
 }
 
 export interface NewOrUpdatedMenuitem {
@@ -21,6 +22,7 @@ export interface NewOrUpdatedMenuitem {
     imageSource: ImageSource;
     description: string;
     price: string;
+    category: string;
 }
 
 export interface ImageDataPayload {

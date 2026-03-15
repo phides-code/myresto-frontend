@@ -28,6 +28,7 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
         } as ImageSource,
         description: '',
         price: '',
+        category: '',
     });
 
     const [postMenuitem, { isLoading: isPostLoading, isError }] =
@@ -40,6 +41,7 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
         !newMenuitem.title ||
         !newMenuitem.description ||
         !newMenuitem.price ||
+        !newMenuitem.category ||
         !adminKeyValid;
     const cancelDisabled = isLoading;
 
@@ -128,6 +130,22 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
                                 handleInputChange(e, 'price');
                             }}
                             value={newMenuitem.price}
+                        />
+                    </p>
+
+                    <p>
+                        <label htmlFor='menuitemCategory'>Category:</label>
+                        <input
+                            type='text'
+                            id='menuitemCategory'
+                            name='menuitemCategory'
+                            required
+                            placeholder='Enter category'
+                            autoFocus
+                            onChange={(e) => {
+                                handleInputChange(e, 'category');
+                            }}
+                            value={newMenuitem.category}
                         />
                     </p>
 

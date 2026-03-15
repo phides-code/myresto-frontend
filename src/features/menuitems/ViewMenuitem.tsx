@@ -27,6 +27,7 @@ const ViewMenuitem = () => {
             } as ImageSource,
             description: '',
             price: '',
+            category: '',
         });
 
     const [showSuccess, setShowSuccess] = useState(false);
@@ -113,6 +114,7 @@ const ViewMenuitem = () => {
         menuitem.title === updatedMenuitem.title &&
         menuitem.description === updatedMenuitem.description &&
         menuitem.price === updatedMenuitem.price &&
+        menuitem.category === updatedMenuitem.category &&
         menuitem.imageSource.uuidName === updatedMenuitem.imageSource.uuidName;
 
     const isLoading = isPutLoading || isQueryFetching || isGetFetching;
@@ -188,6 +190,21 @@ const ViewMenuitem = () => {
                                 />
                             </p>
                             <p>
+                                <label htmlFor='menuitemCategory'>
+                                    Category:
+                                </label>
+                                <input
+                                    type='text'
+                                    id='menuitemCategory'
+                                    name='menuitemCategory'
+                                    defaultValue={menuitem.category}
+                                    required
+                                    onChange={(e) => {
+                                        handleInputChange(e, 'category');
+                                    }}
+                                />
+                            </p>
+                            <p>
                                 <button type='submit' disabled={submitDisabled}>
                                     Update Menuitem
                                 </button>
@@ -212,6 +229,7 @@ const ViewMenuitem = () => {
                     <p>Title: {menuitem.title}</p>
                     <p>Description: {menuitem.description}</p>
                     <p>Price: {menuitem.price}</p>
+                    <p>Category: {menuitem.category}</p>
                     <button onClick={handleEdit}>Edit</button>
                 </div>
             )}
