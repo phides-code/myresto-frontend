@@ -29,3 +29,20 @@ export interface ImageDataPayload {
     image: string;
     fileExt: string;
 }
+
+export interface Settings {
+    bannerMessage: string;
+    phone: string;
+    email: string;
+    address: string;
+    instagram: string;
+    facebook: string;
+    tiktok: string;
+    hoursMonday: string;
+    hoursTuesday: string;
+    hoursWednesday: string;
+    hoursThursday: string;
+    hoursFriday: string;
+    hoursSaturday: string;
+    hoursSunday: string;
+}

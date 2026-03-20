@@ -9,6 +9,9 @@ const MainNav = () => {
             <div>
                 <Link to='/menuitems'>Menuitems</Link>
             </div>
+            <div>
+                <Link to='/settings'>Settings</Link>
+            </div>
         </div>
     );
 };

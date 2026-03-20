@@ -4,6 +4,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { menuitemsApiSlice } from '../features/menuitems/menuitemsApiSlice';
 import { adminKeyApiSlice } from '../features/adminKey/adminKeyApiSlice';
 import { imagesApiSlice } from '../features/images/imagesApiSlice';
+import { settingsApiSlice } from '../features/settings/settingsApiSlice';
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
@@ -11,6 +12,7 @@ const rootReducer = combineSlices(
     menuitemsApiSlice,
     adminKeyApiSlice,
     imagesApiSlice,
+    settingsApiSlice,
 );
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;
@@ -26,7 +28,8 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
             return getDefaultMiddleware()
                 .concat(menuitemsApiSlice.middleware)
                 .concat(adminKeyApiSlice.middleware)
-                .concat(imagesApiSlice.middleware);
+                .concat(imagesApiSlice.middleware)
+                .concat(settingsApiSlice.middleware);
         },
         preloadedState,
     });

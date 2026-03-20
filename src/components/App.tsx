@@ -5,6 +5,7 @@ import AdminKeyValidator from '../features/adminKey/AdminKeyValidator';
 import Menuitems from '../features/menuitems/Menuitems';
 import MainNav from './MainNav';
 import MainPage from './MainPage';
+import EditSettings from '../features/settings/EditSettings';
 
 export const App = () => {
     return (
@@ -16,6 +17,7 @@ export const App = () => {
                     <Routes>
                         <Route path='/' element={<MainPage />} />
                         <Route path='/menuitems/*' element={<Menuitems />} />
+                        <Route path='/settings/*' element={<EditSettings />} />
                     </Routes>
                 </AdminKeyValidityProvider>
             </AdminKeyProvider>
