@@ -8,7 +8,6 @@ import type { Menuitem } from '../../types';
 import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
 import { useAdminKey } from '../../context/AdminKeyContext';
 import { URL_PREFIX } from '../../constants';
-import { useDeleteImageMutation } from '../images/imagesApiSlice';
 
 const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
     const { getAdminKey } = useAdminKey();
@@ -18,9 +17,6 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
         deleteMenuitem,
         { isLoading: isMenuitemLoading, isError: isMenuitemError },
     ] = useDeleteMenuitemMutation();
-
-    const [deleteImage, { isError: isImageError, isLoading: isImageLoading }] =
-        useDeleteImageMutation();
 
     const { refetch, isFetching } = useGetMenuitemsQuery();
 
@@ -44,19 +40,13 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
                     throw new Error(menuitemResult.errorMessage);
                 }
             } else {
-                const [menuitemResult, imageResult] = await Promise.all([
-                    deleteMenuitem({ id: menuitem.id, adminKey }).unwrap(),
-                    deleteImage({
-                        id: menuitem.imageSource.uuidName,
-                        adminKey,
-                    }).unwrap(),
-                ]);
+                const menuitemResult = await deleteMenuitem({
+                    id: menuitem.id,
+                    adminKey,
+                }).unwrap();
 
                 if (menuitemResult.errorMessage) {
                     throw new Error(menuitemResult.errorMessage);
-                }
-                if (imageResult.errorMessage) {
-                    throw new Error(imageResult.errorMessage);
                 }
             }
 
@@ -67,8 +57,7 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
     };
 
     const disableDeleteButton =
-        ((isFetching || isMenuitemLoading || isImageLoading) && deletingThis) ||
-        !adminKeyValid;
+        ((isFetching || isMenuitemLoading) && deletingThis) || !adminKeyValid;
 
     return (
         <li>
@@ -88,9 +77,7 @@ const MenuitemListItem = ({ menuitem }: { menuitem: Menuitem }) => {
             <button disabled={disableDeleteButton} onClick={handleDelete}>
                 Delete
             </button>
-            {(isMenuitemError || isImageError) && (
-                <span>Error deleting menuitem.</span>
-            )}
+            {isMenuitemError && <span>Error deleting menuitem.</span>}
         </li>
     );
 };
