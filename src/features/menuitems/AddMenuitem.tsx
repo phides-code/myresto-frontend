@@ -153,6 +153,7 @@ const AddMenuitem = ({ setShowSuccess }: AddMenuitemProps) => {
                         <ImageUploader
                             parentForm={newMenuitem}
                             setParentForm={setNewMenuitem}
+                            imageKey='imageSource'
                         />
                     </p>
 

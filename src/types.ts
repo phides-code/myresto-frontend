@@ -32,6 +32,7 @@ export interface ImageDataPayload {
 
 export interface Settings {
     bannerMessage: string;
+    bannerImage: ImageSource;
     phone: string;
     email: string;
     address: string;

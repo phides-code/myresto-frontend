@@ -4,17 +4,23 @@ import type { ImageDataPayload, ImageSource } from '../../types';
 import { useAdminKey } from '../../context/AdminKeyContext';
 import UploadedImage from './UploadedImage';
 
-interface ImageUploaderProps<T> {
+/**
+ * Use with an `imageKey` K such that `T[K]` is {@link ImageSource}.
+ * (Call sites are checked: e.g. `Settings` + `'bannerImage'`, `NewOrUpdatedMenuitem` + `'imageSource'`.)
+ */
+export interface ImageUploaderProps<T, K extends keyof T> {
     parentForm: T;
     setParentForm: React.Dispatch<React.SetStateAction<T>>;
+    imageKey: K;
 }
 
 const MAX_FILE_SIZE = 5; // 5MB
 
-const ImageUploader = <T extends { imageSource: ImageSource }>({
-    parentForm: menuitem,
-    setParentForm: setMenuitem,
-}: ImageUploaderProps<T>) => {
+const ImageUploader = <T, K extends keyof T>({
+    parentForm,
+    setParentForm,
+    imageKey,
+}: ImageUploaderProps<T, K>) => {
     const [uploadImage, { isError, isLoading }] = useUploadImageMutation();
     const [unsupportedFileError, setUnsupportedFileError] =
         useState<boolean>(false);
@@ -62,9 +68,9 @@ const ImageUploader = <T extends { imageSource: ImageSource }>({
                     console.log('File uploaded successfully');
                     const uuidName = resultOfUpload.data as string;
 
-                    setMenuitem((menuitem) => ({
-                        ...menuitem,
-                        imageSource: {
+                    setParentForm((prev) => ({
+                        ...prev,
+                        [imageKey]: {
                             originalName,
                             uuidName,
                         },
@@ -78,13 +84,16 @@ const ImageUploader = <T extends { imageSource: ImageSource }>({
         };
     };
 
+    const currentImage = parentForm[imageKey] as ImageSource;
+
     return (
         <div>
             <label>Image (optional?):</label>
-            {menuitem.imageSource.uuidName ? (
+            {currentImage.uuidName ? (
                 <UploadedImage
-                    imageSource={menuitem.imageSource}
-                    setParentForm={setMenuitem}
+                    imageKey={imageKey}
+                    imageSource={currentImage}
+                    setParentForm={setParentForm}
                 />
             ) : (
                 <input

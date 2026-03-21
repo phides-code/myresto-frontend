@@ -144,6 +144,7 @@ const ViewMenuitem = () => {
                                 <ImageUploader
                                     parentForm={updatedMenuitem}
                                     setParentForm={setUpdatedMenuitem}
+                                    imageKey='imageSource'
                                 />
                             </p>
                             <p>

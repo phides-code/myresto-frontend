@@ -1,57 +1,28 @@
 import { URL_PREFIX } from '../../constants';
-import { useAdminKey } from '../../context/AdminKeyContext';
 import type { ImageSource } from '../../types';
-import { useDeleteImageMutation } from './imagesApiSlice';
 
-export interface UploadedImageProps<
-    T extends { imageSource: ImageSource | null },
-> {
+export interface UploadedImageProps<T, K extends keyof T> {
+    imageKey: K;
     imageSource: ImageSource;
     setParentForm: React.Dispatch<React.SetStateAction<T>>;
 }
 
-const UploadedImage = <T extends { imageSource: ImageSource | null }>({
+/** Only use with a key K where T[K] is {@link ImageSource} (see {@link ImageUploader}). */
+const UploadedImage = <T, K extends keyof T>({
+    imageKey,
     imageSource,
-    setParentForm: setMenuitem,
-}: UploadedImageProps<T>) => {
-    const [deleteImage, { isError, isLoading }] = useDeleteImageMutation();
-
-    const { getAdminKey } = useAdminKey();
-
-    const removeFileFromList = async (
-        ev: React.MouseEvent<HTMLButtonElement>,
-        fileToRemove: ImageSource,
-    ) => {
+    setParentForm,
+}: UploadedImageProps<T, K>) => {
+    const handleRemove = (ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
 
-        try {
-            const resultOfDelete = await deleteImage({
-                id: fileToRemove.uuidName,
-                adminKey: getAdminKey(),
-            }).unwrap();
-
-            if (resultOfDelete.errorMessage) {
-                throw new Error(resultOfDelete.errorMessage);
-            }
-
-            if (
-                (resultOfDelete.data as string).includes(fileToRemove.uuidName)
-            ) {
-                console.log('File removed successfully');
-
-                setMenuitem((menuItem) => ({
-                    ...menuItem,
-                    imageSource: {
-                        originalName: '',
-                        uuidName: '',
-                    },
-                }));
-            } else {
-                throw new Error('delete failed');
-            }
-        } catch (error) {
-            console.error('removeFileFromList caught error: ', error);
-        }
+        setParentForm((prev) => ({
+            ...prev,
+            [imageKey]: {
+                originalName: '',
+                uuidName: '',
+            },
+        }));
     };
 
     return (
@@ -65,21 +36,8 @@ const UploadedImage = <T extends { imageSource: ImageSource | null }>({
             />
             <div>
                 <span>{imageSource.originalName}</span>
-                <button
-                    onClick={(ev) => {
-                        removeFileFromList(ev, imageSource);
-                    }}
-                    disabled={isLoading}
-                >
-                    remove
-                </button>
+                <button onClick={handleRemove}>remove</button>
             </div>
-            {isError && (
-                <p>
-                    Something went wrong while removing the image. Please try
-                    again.
-                </p>
-            )}
         </div>
     );
 };

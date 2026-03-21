@@ -12,11 +12,6 @@ interface ImagePayloadWithAdminKey {
     adminKey: string;
 }
 
-interface ImageIdPayloadWithAdminKey {
-    id: string;
-    adminKey: string;
-}
-
 const PATH = 'images';
 
 export const imagesApiSlice = createApi({
@@ -36,18 +31,7 @@ export const imagesApiSlice = createApi({
                 }),
             },
         ),
-        deleteImage: build.mutation<
-            ImageApiResponse,
-            ImageIdPayloadWithAdminKey
-        >({
-            query: (payload) => ({
-                url: `/${payload.id}`,
-                method: 'DELETE',
-                headers: { 'x-admin-key': payload.adminKey },
-            }),
-        }),
     }),
 });
 
-export const { useUploadImageMutation, useDeleteImageMutation } =
-    imagesApiSlice;
+export const { useUploadImageMutation } = imagesApiSlice;
