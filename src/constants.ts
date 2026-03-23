@@ -6,3 +6,4 @@ export const MENUITEMS_SERVICE_URL = import.meta.env
     .VITE_MENUITEMS_SERVICE_URL as string;
 export const IMAGES_SERVICE_URL = import.meta.env
     .VITE_IMAGES_SERVICE_URL as string;
+export const UPLOAD_IMAGE_KEY = 'uploadImage:bannerImage';

@@ -5,6 +5,8 @@ import { menuitemsApiSlice } from '../features/menuitems/menuitemsApiSlice';
 import { adminKeyApiSlice } from '../features/adminKey/adminKeyApiSlice';
 import { imagesApiSlice } from '../features/images/imagesApiSlice';
 import { settingsApiSlice } from '../features/settings/settingsApiSlice';
+import { themesApiSlice } from '../features/themes/themesApiSlice';
+import { themeSettingsApiSlice } from '../features/themeSettings/themeSettingsApiSlice';
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
@@ -13,6 +15,8 @@ const rootReducer = combineSlices(
     adminKeyApiSlice,
     imagesApiSlice,
     settingsApiSlice,
+    themesApiSlice,
+    themeSettingsApiSlice,
 );
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>;
@@ -29,7 +33,9 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
                 .concat(menuitemsApiSlice.middleware)
                 .concat(adminKeyApiSlice.middleware)
                 .concat(imagesApiSlice.middleware)
-                .concat(settingsApiSlice.middleware);
+                .concat(settingsApiSlice.middleware)
+                .concat(themesApiSlice.middleware)
+                .concat(themeSettingsApiSlice.middleware);
         },
         preloadedState,
     });

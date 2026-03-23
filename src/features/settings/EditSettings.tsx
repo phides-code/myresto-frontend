@@ -3,10 +3,9 @@ import {
     useGetSettingsQuery,
     usePostSettingsMutation,
 } from './settingsApiSlice';
-import type { ImageSource, Settings } from '../../types';
+import type { Settings } from '../../types';
 import { useAdminKey } from '../../context/AdminKeyContext';
 import { AdminKeyValidityContext } from '../../context/AdminKeyValidityContext';
-import ImageUploader from '../images/ImageUploader';
 
 const EditSettings = () => {
     const { adminKeyValid } = useContext(AdminKeyValidityContext);
@@ -21,10 +20,6 @@ const EditSettings = () => {
         usePostSettingsMutation();
     const blankSettings: Settings = {
         bannerMessage: '',
-        bannerImage: {
-            originalName: '',
-            uuidName: '',
-        } as ImageSource,
         hoursMonday: '',
         hoursTuesday: '',
         hoursWednesday: '',
@@ -107,8 +102,7 @@ const EditSettings = () => {
         settings.address === updatedSettings.address &&
         settings.instagram === updatedSettings.instagram &&
         settings.facebook === updatedSettings.facebook &&
-        settings.tiktok === updatedSettings.tiktok &&
-        settings.bannerImage.uuidName === updatedSettings.bannerImage.uuidName;
+        settings.tiktok === updatedSettings.tiktok;
 
     const isLoading = isPostLoading || isGetFetching;
     const submitDisabled = isLoading || contentUnchanged || !adminKeyValid;
@@ -328,13 +322,7 @@ const EditSettings = () => {
                                 </div>
                             </div>
                         </p>
-                        <p>
-                            <ImageUploader
-                                parentForm={updatedSettings}
-                                setParentForm={setUpdatedSettings}
-                                imageKey='bannerImage'
-                            />
-                        </p>
+
                         <p>
                             <button type='submit' disabled={submitDisabled}>
                                 Update Settings

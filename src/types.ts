@@ -32,7 +32,6 @@ export interface ImageDataPayload {
 
 export interface Settings {
     bannerMessage: string;
-    bannerImage: ImageSource;
     phone: string;
     email: string;
     address: string;
@@ -46,4 +45,18 @@ export interface Settings {
     hoursFriday: string;
     hoursSaturday: string;
     hoursSunday: string;
+}
+
+export interface ThemeSettings {
+    bannerImage: ImageSource;
+    selectedTheme: Theme;
+}
+
+export interface Theme {
+    themeName: string;
+    backgroundColor: string;
+    textColor: string;
+    linkColor: string;
+    accentColor: string;
+    buttonColor: string;
 }

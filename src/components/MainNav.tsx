@@ -12,6 +12,9 @@ const MainNav = () => {
             <div>
                 <Link to='/settings'>Settings</Link>
             </div>
+            <div>
+                <Link to='/themesettings'>Theme Settings</Link>
+            </div>
         </div>
     );
 };

@@ -3,6 +3,7 @@ import { useUploadImageMutation } from './imagesApiSlice';
 import type { ImageDataPayload, ImageSource } from '../../types';
 import { useAdminKey } from '../../context/AdminKeyContext';
 import UploadedImage from './UploadedImage';
+import { UPLOAD_IMAGE_KEY } from '../../constants';
 
 /**
  * Use with an `imageKey` K such that `T[K]` is {@link ImageSource}.
@@ -21,7 +22,9 @@ const ImageUploader = <T, K extends keyof T>({
     setParentForm,
     imageKey,
 }: ImageUploaderProps<T, K>) => {
-    const [uploadImage, { isError, isLoading }] = useUploadImageMutation();
+    const [uploadImage, { isError, isLoading }] = useUploadImageMutation({
+        fixedCacheKey: UPLOAD_IMAGE_KEY,
+    });
     const [unsupportedFileError, setUnsupportedFileError] =
         useState<boolean>(false);
 
