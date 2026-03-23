@@ -59,4 +59,5 @@ export interface Theme {
     linkColor: string;
     accentColor: string;
     buttonColor: string;
+    buttonTextColor: string;
 }

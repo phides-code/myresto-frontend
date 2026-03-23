@@ -6,7 +6,7 @@ import Menuitems from '../features/menuitems/Menuitems';
 import MainNav from './MainNav';
 import MainPage from './MainPage';
 import EditSettings from '../features/settings/EditSettings';
-import EditThemeSettings from '../features/themes/EditThemeSettings';
+import EditThemeSettings from '../features/themeSettings/EditThemeSettings';
 
 export const App = () => {
     return (

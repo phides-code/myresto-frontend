@@ -7,9 +7,10 @@ import {
     useGetThemeSettingsQuery,
     usePostThemeSettingsMutation,
 } from '../themeSettings/themeSettingsApiSlice';
-import { useGetThemesQuery } from './themesApiSlice';
 import { useUploadImageMutation } from '../images/imagesApiSlice';
 import { UPLOAD_IMAGE_KEY } from '../../constants';
+import { useGetThemesQuery } from '../themes/themesApiSlice';
+import ThemePreview from './ThemePreview';
 
 const EditThemeSettings = () => {
     const { adminKeyValid } = useContext(AdminKeyValidityContext);
@@ -50,6 +51,7 @@ const EditThemeSettings = () => {
                 accentColor: '',
                 backgroundColor: '',
                 buttonColor: '',
+                buttonTextColor: '',
                 linkColor: '',
                 textColor: '',
                 themeName: '',
@@ -170,6 +172,7 @@ const EditThemeSettings = () => {
                         )}
                     </fieldset>
                 </form>
+                <ThemePreview theme={updatedThemeSettings.selectedTheme} />
             </div>
             {showSuccess && (
                 <div>
